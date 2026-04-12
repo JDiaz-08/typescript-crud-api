@@ -1,4 +1,3 @@
-
 import type { Request, NextFunction } from 'express';
 import Joi from 'joi';
 
@@ -8,7 +7,7 @@ export function validateRequest(
   schema: Joi.ObjectSchema
 ): void {
   const options = {
-    abortEarly: false,
+    abortEarly:   false,
     allowUnknown: true,
     stripUnknown: true,
   };
