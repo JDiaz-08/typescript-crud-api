@@ -41,10 +41,28 @@ export default function (sequelize: Sequelize): typeof Request {
     {
       id:     { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
       type:   { type: DataTypes.ENUM('Equipment', 'Leave', 'Resources'), allowNull: false },
-      items:  { type: DataTypes.JSON, allowNull: false },
+      items:  {
+        type: DataTypes.TEXT,   // store as TEXT so MySQL never mangles it
+        allowNull: false,
+        // Always serialize to JSON string on save
+        set(value: RequestItem[]) {
+          this.setDataValue('items', JSON.stringify(value) as any);
+        },
+        // Always parse back to array on read
+        get() {
+          const raw = this.getDataValue('items');
+          if (!raw) return [];
+          if (Array.isArray(raw)) return raw;
+          try {
+            return JSON.parse(raw as any);
+          } catch {
+            return [];
+          }
+        },
+      },
       status: { type: DataTypes.ENUM('Pending', 'Approved', 'Rejected'), allowNull: false, defaultValue: 'Pending' },
       date:   { type: DataTypes.DATEONLY, allowNull: false, defaultValue: DataTypes.NOW },
-      userId: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'users', key: 'id' } },
+      userId: { type: DataTypes.INTEGER,  allowNull: false, references: { model: 'users', key: 'id' } },
       createdAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
       updatedAt: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
     },

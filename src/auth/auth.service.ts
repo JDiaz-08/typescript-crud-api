@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { db } from '../_helpers/db';
 import { Role } from '../_helpers/role';
 import config from '../../config.json';
@@ -29,7 +29,10 @@ async function register(params: {
     verified:     false,
   });
 
-  const verifyToken = jwt.sign({ id: user.id }, config.jwtSecret, { expiresIn: '1h' });
+  const payload = { id: user.id };
+  const options: SignOptions = { expiresIn: '1h' };
+  const verifyToken = jwt.sign(payload, config.jwtSecret, options);
+
   return { message: 'Account created. Please verify your email.', verifyToken };
 }
 
@@ -61,11 +64,9 @@ async function login(
   if (!match)
     throw 'Invalid credentials or unverified email';
 
-  const token = jwt.sign(
-    { id: user.id, role: user.role, email: user.email },
-    config.jwtSecret,
-    { expiresIn: config.jwtExpiresIn }
-  );
+  const payload = { id: user.id, role: user.role, email: user.email };
+  const options: SignOptions = { expiresIn: config.jwtExpiresIn as SignOptions['expiresIn'] };
+  const token = jwt.sign(payload, config.jwtSecret, options);
 
   return { token, role: user.role, firstName: user.firstName, lastName: user.lastName };
 }

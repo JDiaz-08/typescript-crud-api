@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../../config.json';
 
 export interface AuthRequest extends Request {
@@ -20,7 +20,11 @@ export function authenticate(
   }
 
   try {
-    const payload = jwt.verify(token, config.jwtSecret) as any;
+    const payload = jwt.verify(token, config.jwtSecret) as JwtPayload & {
+      id: number;
+      role: string;
+      email: string;
+    };
     req.user = { id: payload.id, role: payload.role, email: payload.email };
     next();
   } catch {

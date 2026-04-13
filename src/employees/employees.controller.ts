@@ -39,11 +39,13 @@ function remove(req: AuthRequest, res: Response, next: NextFunction): void {
 function createSchema(req: AuthRequest, res: Response, next: NextFunction): void {
   const schema = Joi.object({
     employeeId:   Joi.string().required(),
-    userId:       Joi.number().integer().required(),
+    // Accept either userId (number) or userEmail (string) — service resolves both
+    userId:       Joi.number().integer().optional(),
+    userEmail:    Joi.string().email().optional(),
     departmentId: Joi.number().integer().required(),
     position:     Joi.string().required(),
     hireDate:     Joi.string().isoDate().required(),
-  });
+  }).or('userId', 'userEmail'); // at least one must be present
   validateRequest(req, next, schema);
 }
 
@@ -51,6 +53,7 @@ function updateSchema(req: AuthRequest, res: Response, next: NextFunction): void
   const schema = Joi.object({
     employeeId:   Joi.string().optional(),
     userId:       Joi.number().integer().optional(),
+    userEmail:    Joi.string().email().optional(),
     departmentId: Joi.number().integer().optional(),
     position:     Joi.string().optional(),
     hireDate:     Joi.string().isoDate().optional(),

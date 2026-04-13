@@ -161,40 +161,41 @@
             </div>
         </section>
 
-        <section id="employees-page" class="page">
-            <h2>Employees</h2>
-            <button class="btn btn-success mb-3" id="add-employee-btn">+ Add Employee</button>
-            <div id="employees-list"></div>
-            <div id="employee-form-container" class="card mt-3 d-none">
-                <div class="card-body">
-                    <h5>Add / Edit Employee</h5>
-                    <form id="employee-form">
-                        <div class="mb-3">
-                            <label class="form-label">Employee ID</label>
-                            <input type="text" class="form-control" id="emp-id" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">User ID (numeric — check Accounts page)</label>
-                            <input type="number" class="form-control" id="emp-userid" placeholder="e.g. 1" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Position</label>
-                            <input type="text" class="form-control" id="emp-position" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Department</label>
-                            <select class="form-control" id="emp-department" required></select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Hire Date</label>
-                            <input type="date" class="form-control" id="emp-hiredate" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-employee-btn">Cancel</button>
-                    </form>
+       <section id="employees-page" class="page">
+    <h2>Employees</h2>
+    <button class="btn btn-success mb-3" id="add-employee-btn">+ Add Employee</button>
+    <div id="employees-list"></div>
+    <div id="employee-form-container" class="card mt-3 d-none">
+        <div class="card-body">
+            <h5>Add / Edit Employee</h5>
+            <form id="employee-form">
+                <div class="mb-3">
+                    <label class="form-label">Employee ID</label>
+                    <input type="text" class="form-control" id="emp-id" required>
                 </div>
-            </div>
-        </section>
+                <div class="mb-3">
+                    <label class="form-label">User Account</label>
+                    <!-- Dropdown populated dynamically from GET /users -->
+                    <select class="form-control" id="emp-user" required></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Position</label>
+                    <input type="text" class="form-control" id="emp-position" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Department</label>
+                    <select class="form-control" id="emp-department" required></select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hire Date</label>
+                    <input type="date" class="form-control" id="emp-hiredate" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" id="cancel-employee-btn">Cancel</button>
+            </form>
+        </div>
+    </div>
+</section>
 
         <section id="departments-page" class="page">
             <h2>Departments</h2>

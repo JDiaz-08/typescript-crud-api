@@ -17,20 +17,39 @@ async function getById(id: number): Promise<Employee> {
   return getEmployee(id);
 }
 
-async function create(params: EmployeeCreationAttributes): Promise<Employee> {
-  const dupId = await db.Employee.findOne({ where: { employeeId: params.employeeId } });
-  if (dupId) throw `Employee ID "${params.employeeId}" already exists`;
+async function create(params: any): Promise<Employee> {
+  // Support lookup by email if userId not provided directly
+  let userId = params.userId;
+  if (!userId && params.userEmail) {
+    const user = await db.User.findOne({ where: { email: params.userEmail } });
+    if (!user) throw `No account found with email "${params.userEmail}"`;
+    userId = user.id;
+  }
+  if (!userId) throw 'User is required';
 
-  const user = await db.User.findByPk(params.userId);
+  const user = await db.User.findByPk(userId);
   if (!user) throw 'User not found';
 
   const dept = await db.Department.findByPk(params.departmentId);
   if (!dept) throw 'Department not found';
 
-  return db.Employee.create(params);
+  const dupId = await db.Employee.findOne({ where: { employeeId: params.employeeId } });
+  if (dupId) throw `Employee ID "${params.employeeId}" already exists`;
+
+  // Check user doesn't already have an employee record
+  const dupUser = await db.Employee.findOne({ where: { userId } });
+  if (dupUser) throw `This user already has an employee record`;
+
+  return db.Employee.create({
+    employeeId:   params.employeeId,
+    userId,
+    departmentId: params.departmentId,
+    position:     params.position,
+    hireDate:     params.hireDate,
+  });
 }
 
-async function update(id: number, params: Partial<EmployeeCreationAttributes>): Promise<Employee> {
+async function update(id: number, params: any): Promise<Employee> {
   const emp = await getEmployee(id);
 
   if (params.employeeId && params.employeeId !== emp.employeeId) {
@@ -46,7 +65,13 @@ async function update(id: number, params: Partial<EmployeeCreationAttributes>): 
     if (!dept) throw 'Department not found';
   }
 
-  await emp.update(params);
+  await emp.update({
+    employeeId:   params.employeeId   ?? emp.employeeId,
+    userId:       params.userId       ?? emp.userId,
+    departmentId: params.departmentId ?? emp.departmentId,
+    position:     params.position     ?? emp.position,
+    hireDate:     params.hireDate     ?? emp.hireDate,
+  });
   return emp;
 }
 

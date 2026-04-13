@@ -7,11 +7,12 @@ import { requestsService } from './requests.service';
 
 const router = Router();
 
-router.get('/',              authenticate, getMyRequests);
-router.post('/',             authenticate, createSchema, create);
-router.get('/all',           authenticate, authorizeAdmin, getAll);
-router.put('/:id/status',    authenticate, authorizeAdmin, updateStatus);
-router.delete('/:id',        authenticate, authorizeAdmin, remove);
+// IMPORTANT: /all must be registered before /:id or Express matches 'all' as an id param
+router.get('/all',        authenticate, authorizeAdmin, getAll);
+router.get('/',           authenticate, getMyRequests);
+router.post('/',          authenticate, createSchema, create);
+router.put('/:id/status', authenticate, authorizeAdmin, updateStatus);
+router.delete('/:id',     authenticate, authorizeAdmin, remove);
 
 export default router;
 
